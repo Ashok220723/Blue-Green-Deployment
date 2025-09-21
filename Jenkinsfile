@@ -9,7 +9,7 @@ pipeline {
     }
     
     environment {
-        IMAGE_NAME = "vsiraparapu/bankapp"
+        IMAGE_NAME = "ash425/bankapp"
         TAG = "${params.DOCKER_TAG}"
         KUBE_NAMESPACE = 'webapps'
         // SCANNER_HOME = tool 'sonar-scanner'

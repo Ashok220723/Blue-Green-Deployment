@@ -41,7 +41,7 @@ pipeline {
         stage('Docker Build & tag image') {
             steps {
                 script{
-                    withDockerRegistry(credentialsId: 'ash425-docker-creds') {
+                    withDockerRegistry(credentialsId: 'docker-jenkins-creds') {
                         sh "docker build -t ${IMAGE_NAME}:${TAG} ."
                     }
                 }
@@ -52,7 +52,7 @@ pipeline {
         stage('Docker Push image') {
             steps {
                 script{
-                    withDockerRegistry(credentialsId: 'ash425-docker-creds') {
+                    withDockerRegistry(credentialsId: 'docker-jenkins-creds') {
                         sh "docker push ${IMAGE_NAME}:${TAG}"
                     }
                 }
@@ -61,7 +61,7 @@ pipeline {
 
         stage('Deploy MySQL to Local K8s') {
             steps {
-                withKubeConfig(credentialsId: 'ash425-kubect-config-creds') {
+                withKubeConfig(credentialsId: 'kubeconfig-dev-kt-k8s') {
                     sh 'kubectl apply -f mysql-ds.yml'
                 }
             }
@@ -70,7 +70,7 @@ pipeline {
 
         stage('Deploy SVC app') {
             steps {
-                withKubeConfig(credentialsId: 'ash425-kubect-config-creds') {
+                withKubeConfig(credentialsId: 'kubeconfig-dev-kt-k8s') {
                     sh ' kubectl apply -f bankapp-service.yml'
                 }
             }
@@ -86,7 +86,7 @@ pipeline {
                         deploymentFile = 'app-deployment-green.yml'
                     }
                     
-                    withKubeConfig(credentialsId: 'ash425-kubect-config-creds') {
+                    withKubeConfig(credentialsId: 'kubeconfig-dev-kt-k8s') {
                        sh "kubectl apply -f ${deploymentFile}"
                     }
                 }

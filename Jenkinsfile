@@ -62,7 +62,7 @@ pipeline {
         stage('Deploy MySQL to Local K8s') {
             steps {
                 withKubeConfig(credentialsId: 'kubeconfig-dev-kt-k8s') {
-                    sh 'kubectl apply -f mysql-ds.yml'
+                    sh 'kubectl apply -f mysql-ds.yml --validate=false'
                 }
             }
         }

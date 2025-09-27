@@ -85,8 +85,7 @@ pipeline {
                     } else {
                         deploymentFile = 'app-deployment-green.yml'
                     }
-                    
-                    withKubeConfig(credentialsId: 'kubeconfig-dev-kt-k8s') {
+                        withKubeConfig(credentialsId: 'kubeconfig-dev-kt-k8s') {
                        sh "kubectl apply -f ${deploymentFile}"
                     }
                 }

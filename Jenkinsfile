@@ -19,21 +19,12 @@ pipeline {
 
      
        
-        stage('Compile') {
-            steps {
-                sh "mvn compile"
+        stage("Build Code") {
+            tools {
+                maven 'maven-3.9.11'
             }
-        }
-        
-        stage('Tests') {
             steps {
-                sh "mvn clean test -X -DskipTests=true"
-            }
-        }
-        
-        stage('Build') {
-            steps {
-                sh "mvn package -DskipTests=true"
+                sh "mvn clean install -DskipTests"
             }
         }
         

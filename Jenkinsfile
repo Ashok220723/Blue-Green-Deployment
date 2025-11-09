@@ -12,7 +12,7 @@ pipeline {
         IMAGE_NAME = "ash425/bankapp"
         TAG = "${params.DOCKER_TAG}"
         KUBE_NAMESPACE = 'webapps'
-        // SCANNER_HOME = tool 'sonar-scanner'
+        // SCANNER_HOME = tool 'sonar-scanner-7.3.0'
     }
 
     stages {
@@ -41,7 +41,7 @@ pipeline {
         stage('Docker Build & tag image') {
             steps {
                 script{
-                    withDockerRegistry(credentialsId: 'docker-jenkins-creds') {
+                    withDockerRegistry(credentialsId: 'docker') {
                         sh "docker build -t ${IMAGE_NAME}:${TAG} ."
                     }
                 }
@@ -52,7 +52,7 @@ pipeline {
         stage('Docker Push image') {
             steps {
                 script{
-                    withDockerRegistry(credentialsId: 'docker-jenkins-creds') {
+                    withDockerRegistry(credentialsId: 'docker') {
                         sh "docker push ${IMAGE_NAME}:${TAG}"
                     }
                 }
@@ -61,7 +61,7 @@ pipeline {
 
         stage('Deploy MySQL to Local K8s') {
             steps {
-                withKubeConfig(credentialsId: 'kubeconfig-dev-kt-k8s') {
+                withKubeConfig(credentialsId: 'minikube-kubeconfig') {
                     sh 'kubectl apply -f mysql-ds.yml'
                 }
             }
@@ -70,7 +70,7 @@ pipeline {
 
         stage('Deploy SVC app') {
             steps {
-                withKubeConfig(credentialsId: 'kubeconfig-dev-kt-k8s') {
+                withKubeConfig(credentialsId: 'minikube-kubeconfig') {
                     sh ' kubectl apply -f bankapp-service.yml'
                 }
             }
@@ -85,7 +85,7 @@ pipeline {
                     } else {
                         deploymentFile = 'app-deployment-green.yml'
                     }
-                        withKubeConfig(credentialsId: 'kubeconfig-dev-kt-k8s') {
+                        withKubeConfig(credentialsId: 'minikube-kubeconfig') {
                        sh "kubectl apply -f ${deploymentFile}"
                     }
                 }
